@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Fordító · CZ→HU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e10;
+            --surface: #16161a;
+            --surface2: #1e1e24;
+            --border: #2a2a32;
+            --border-bright: #3a3a46;
+            --accent: #a78bfa;
+            --accent2: #4fc3f7;
+            --accent3: #ff9d6e;
+            --text: #e8e8f0;
+            --text-muted: #7a7a8c;
+            --text-dim: #4a4a5a;
+            --error: #ff6e6e;
+            --warn: #ffd06e;
+            --success: #6effa0;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+        /* ── HEADER ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-brand { display: flex; align-items: center; gap: 10px; }
+
+        .header-logo {
+            width: 32px; height: 32px;
+            background: var(--accent);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px; font-weight: 600; color: #000;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px; font-weight: 700; letter-spacing: -0.3px;
+        }
+
+        .header-sub {
+            font-size: 11px; color: var(--text-muted);
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 10px; }
+
+        .api-key-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 6px 12px;
+        }
+
+        .api-key-wrap label {
+            font-size: 11px; color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .api-key-wrap input {
+            background: transparent; border: none; outline: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px; color: var(--text); width: 200px;
+        }
+
+        .api-status {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--text-dim); flex-shrink: 0;
+            transition: background 0.3s;
+        }
+        .api-status.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+
+        /* ── LAYOUT ── */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: calc(100vh - 57px);
+            overflow: hidden;
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-section {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px; font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 1.2px; text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .section-label .badge {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px; padding: 1px 6px;
+            font-size: 9px; color: var(--accent);
+        }
+
+        .field-label {
+            font-size: 11px; color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px; padding: 9px 12px;
+            outline: none; transition: border-color 0.2s;
+            resize: none;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+        }
+
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a8c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+
+        .mb-10 { margin-bottom: 10px; }
+
+        /* KW chips */
+        .kw-chips {
+            display: flex; flex-wrap: wrap; gap: 4px;
+            max-height: 100px; overflow-y: auto; margin-top: 8px;
+        }
+
+        .kw-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 2px 7px;
+            font-size: 11px; color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .kw-chip .vol { color: var(--accent); font-size: 10px; }
+        .kw-empty { font-size: 11px; color: var(--text-dim); font-style: italic; }
+
+        /* Model buttons */
+        .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+        .model-btn {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 8px 10px;
+            cursor: pointer; text-align: left; transition: all 0.15s;
+        }
+        .model-btn:hover { border-color: var(--border-bright); }
+        .model-btn.active { border-color: var(--accent); background: rgba(167,139,250,0.07); }
+
+        .model-btn-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px; font-weight: 600; color: var(--text);
+        }
+        .model-btn.active .model-btn-name { color: var(--accent); }
+
+        .model-btn-desc { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+        /* Post-process toggles */
+        .pp-list { display: flex; flex-direction: column; gap: 5px; }
+
+        .pp-toggle {
+            display: flex; align-items: center; gap: 7px;
+            cursor: pointer; padding: 6px 9px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: var(--radius); transition: all 0.15s;
+            user-select: none;
+        }
+        .pp-toggle:hover { border-color: var(--border-bright); }
+        .pp-toggle.on { border-color: var(--accent2); background: rgba(79,195,247,0.06); }
+
+        .toggle-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--border-bright); flex-shrink: 0; transition: background 0.2s;
+        }
+        .pp-toggle.on .toggle-dot { background: var(--accent2); }
+        .toggle-label { font-size: 11px; color: var(--text-muted); }
+        .pp-toggle.on .toggle-label { color: var(--text); }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex; gap: 12px; padding: 10px 18px;
+            background: var(--surface2); border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .stat { display: flex; flex-direction: column; gap: 1px; }
+        .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; font-family: 'IBM Plex Mono', monospace; }
+        .stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .stat-val.highlight { color: var(--accent); }
+
+        /* ── RIGHT PANEL ── */
+        .right-panel { display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            gap: 12px; flex-wrap: wrap;
+        }
+
+        .toolbar-left { display: flex; align-items: center; gap: 10px; }
+
+        .btn-translate {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--accent); color: #000;
+            border: none; border-radius: var(--radius);
+            padding: 9px 20px;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .btn-translate:hover { background: #c4b5fd; transform: translateY(-1px); }
+        .btn-translate:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; transform: none; }
+        .btn-translate.loading { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); cursor: wait; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; display: inline-block; }
+
+        .view-tabs {
+            display: flex; background: var(--surface2);
+            border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+        }
+
+        .view-tab {
+            padding: 6px 14px; font-size: 12px; font-weight: 500;
+            cursor: pointer; border: none; background: transparent;
+            color: var(--text-muted); transition: all 0.15s;
+        }
+        .view-tab.active { background: var(--surface); color: var(--text); }
+
+        .toolbar-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
+        .btn-icon {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 6px 12px;
+            font-size: 12px; color: var(--text-muted);
+            cursor: pointer; transition: all 0.15s;
+        }
+        .btn-icon:hover { border-color: var(--border-bright); color: var(--text); }
+        .btn-icon.copied { border-color: var(--success); color: var(--success); }
+
+        .timer-badge {
+            display: flex; align-items: center; gap: 5px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px; color: var(--text-dim);
+            padding: 0 4px;
+        }
+        .timer-badge.running { color: var(--accent3); }
+
+        .output-stats { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); padding: 0 4px; }
+
+        .divider { width: 1px; height: 20px; background: var(--border); }
+
+        /* ── SPLIT OUTPUT AREA ── */
+        .output-area { flex: 1; overflow: hidden; position: relative; }
+
+        .output-pane { width: 100%; height: 100%; display: none; overflow: hidden; }
+        .output-pane.active { display: flex; }
+
+        /* Code pane: source left, result right */
+        .code-pane { gap: 0; }
+
+        .code-half {
+            flex: 1; display: flex; flex-direction: column;
+            border-right: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .code-half:last-child { border-right: none; }
+
+        .code-half-label {
+            padding: 7px 14px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px; font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .code-half-label span { color: var(--text-dim); font-size: 10px; }
+
+        .code-half textarea {
+            flex: 1; border: none; border-radius: 0;
+            background: var(--bg);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12.5px; line-height: 1.7;
+            padding: 16px 20px;
+            resize: none; outline: none;
+            color: var(--text);
+        }
+
+        .code-half textarea:focus { border-color: transparent; }
+        .code-half textarea.result-area { color: #c8d3f5; }
+
+        /* Preview pane */
+        .preview-pane { background: #fff; }
+
+        #preview-frame { width: 100%; height: 100%; border: none; }
+
+        /* Keywords pane */
+        .kw-stats-pane {
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px 24px;
+            background: var(--bg);
+            gap: 8px;
+        }
+
+        .kw-stat-row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .kw-stat-word { font-size: 13px; font-weight: 500; flex: 1; min-width: 0; }
+        .kw-stat-count {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px; font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .kw-stat-count.found { background: rgba(110,255,160,0.12); color: var(--success); }
+        .kw-stat-count.missing { background: var(--surface2); color: var(--text-dim); }
+
+        .kw-stat-bar-wrap { flex: 1; height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+        .kw-stat-bar { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.6s ease; }
+
+        .kw-stats-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px; font-weight: 600;
+            color: var(--text-muted); letter-spacing: 1px;
+            text-transform: uppercase; margin-bottom: 6px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100%; gap: 12px; color: var(--text-dim);
+        }
+        .empty-icon { font-size: 36px; opacity: 0.3; }
+        .empty-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+        .empty-sub { font-size: 12px; text-align: center; max-width: 280px; line-height: 1.6; }
+
+        /* Progress */
+        .progress-bar { height: 2px; background: var(--surface2); overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+        .progress-fill.indeterminate { width: 40%; animation: indeterminate 1.5s ease-in-out infinite; }
+        @keyframes indeterminate { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+
+        /* Error / Continue bar */
+        .error-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,110,110,0.1); border-top: 1px solid var(--error);
+            padding: 10px 20px; font-size: 12px; color: var(--error);
+        }
+        .error-bar button { margin-left: auto; background: none; border: none; color: var(--error); cursor: pointer; font-size: 16px; }
+
+        .continue-bar {
+            display: none; align-items: center; gap: 10px;
+            background: rgba(255,208,110,0.08); border-top: 1px solid var(--warn);
+            padding: 10px 20px; font-size: 12px; color: var(--warn);
+        }
+        .continue-bar button.do-continue {
+            margin-left: auto;
+            background: var(--warn); color: #000;
+            border: none; border-radius: 6px;
+            padding: 5px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .continue-bar button.dismiss {
+            background: none; border: none; color: var(--warn); cursor: pointer; font-size: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .app-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .left-panel { max-height: 45vh; }
+            .code-pane { flex-direction: column; }
+            .code-half { border-right: none; border-bottom: 1px solid var(--border); }
+            .api-key-wrap input { width: 130px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-brand">
+        <div class="header-logo">T</div>
+        <div>
+            <div class="header-title">SEO Fordító</div>
+            <div class="header-sub">CZ → HU · Google Gemini</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="api-key-wrap">
+            <div class="api-status" id="api-status"></div>
+            <label>API KEY</label>
+            <input type="password" id="api-key-input" placeholder="AIzaSy..." autocomplete="off">
+        </div>
+    </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<!-- MAIN LAYOUT -->
+<div class="app-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+        <!-- 01 Model -->
+        <div class="panel-section">
+            <div class="section-label"><span>01</span> Modell</div>
+            <div class="model-grid" id="model-grid">
+                <button class="model-btn active" data-model="gemini-2.5-pro">
+                    <div class="model-btn-name">2.5 Pro</div>
+                    <div class="model-btn-desc">Alapértelmezett</div>
+                </button>
+                <button class="model-btn" data-model="gemini-3.1-pro-preview">
+                    <div class="model-btn-name">3.1 Pro</div>
+                    <div class="model-btn-desc">Alternatíva</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 02 Keywords -->
+        <div class="panel-section">
+            <div class="section-label">
+                <span>02</span> Kulcsszavak
+                <span class="badge" id="kw-count-badge">0 db</span>
+            </div>
+            <div class="field-label">
+                <span>szó volumen (pl: led lámpa 500)</span>
+            </div>
+            <textarea id="keywords-input" rows="7" style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6" placeholder="zarovka 1200&#10;led lámpa 800&#10;izzó 350"></textarea>
+            <div class="kw-chips" id="kw-chips">
+                <span class="kw-empty">Nincs kulcsszó még</span>
+            </div>
+        </div>
+
+        <!-- 03 Post-process -->
+        <div class="panel-section">
+            <div class="section-label"><span>03</span> Utófeldolgozás</div>
+            <div class="pp-list" id="pp-list">
+                <label class="pp-toggle on" data-key="cz_to_hu">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">.cz → .hu URL csere</span>
+                </label>
+                <label class="pp-toggle on" data-key="nbsp">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">&amp;nbsp; → szóköz</span>
+                </label>
+                <label class="pp-toggle on" data-key="zarovka">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">zarovka → zarovka100</span>
+                </label>
+                <label class="pp-toggle on" data-key="bulletin_class">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">article-bulletin clean</span>
+                </label>
+                <label class="pp-toggle on" data-key="li_strong">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">&lt;li&gt; névelő fix</span>
+                </label>
+                <label class="pp-toggle on" data-key="bazar_outlet">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">Bazár → Outlet</span>
+                </label>
+                <label class="pp-toggle on" data-key="strip_fence">
+                    <div class="toggle-dot"></div>
+                    <span class="toggle-label">``` blokk eltávolítás</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">Forrás</span>
+                <span class="stat-val" id="stat-src">—</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Kimenet</span>
+                <span class="stat-val highlight" id="stat-out">—</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">KW</span>
+                <span class="stat-val" id="stat-kw">0</span>
+            </div>
+            <div class="stat" style="margin-left:auto">
+                <span class="stat-label">Modell</span>
+                <span class="stat-val" id="stat-model">2.5 Pro</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn-translate" id="translate-btn">
+                    <span id="trans-icon">⟳</span>
+                    <span id="trans-label">Fordítás</span>
+                </button>
+                <div class="view-tabs">
+                    <button class="view-tab active" data-view="code">Kód</button>
+                    <button class="view-tab" data-view="preview">Előnézet</button>
+                    <button class="view-tab" data-view="keywords">Kulcsszavak</button>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <span class="timer-badge" id="timer-badge">◷ —</span>
+                <span class="output-stats" id="output-stats"></span>
+                <div class="divider"></div>
+                <button class="btn-icon" id="copy-btn">⎘ Másolás</button>
+            </div>
+        </div>
+
+        <!-- OUTPUT AREA -->
+        <div class="output-area">
+
+            <!-- CODE PANE: split source / result -->
+            <div class="output-pane code-pane active" id="pane-code">
+                <div class="code-half">
+                    <div class="code-half-label">
+                        FORRÁS (CZ)
+                        <span id="src-char-count">0 kar</span>
+                    </div>
+                    <textarea id="source-input" placeholder="<p>Vložte HTML kód...</p>" spellcheck="false"></textarea>
+                </div>
+                <div class="code-half">
+                    <div class="code-half-label">
+                        KIMENET (HU)
+                        <span id="out-char-count">0 kar</span>
+                    </div>
+                    <textarea id="result-output" class="result-area" placeholder="Az eredmény itt jelenik meg..." spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <!-- PREVIEW PANE -->
+            <div class="output-pane preview-pane" id="pane-preview">
+                <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
+            </div>
+
+            <!-- KEYWORD STATS PANE -->
+            <div class="output-pane kw-stats-pane" id="pane-keywords">
+                <div class="kw-stats-title">Kulcsszó sűrűség az eredményben</div>
+                <div id="kw-stats-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">◈</div>
+                        <div class="empty-title">Nincs adat még</div>
+                        <div class="empty-sub">Futtasd le a fordítást, majd ellenőrizd a kulcsszó előfordulásokat.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error bar -->
+        <div class="error-bar" id="error-bar" style="display:none">
+            <span>⚠</span><span id="error-msg"></span>
+            <button onclick="hideError()">✕</button>
+        </div>
+
+        <!-- Continue bar -->
+        <div class="continue-bar" id="continue-bar">
+            <span>⚠</span>
+            <span>A fordítás valószínűleg csonkult (token limit elérve).</span>
+            <button class="do-continue" onclick="handleContinue()">▶ Folytatás</button>
+            <button class="dismiss" onclick="document.getElementById('continue-bar').style.display='none'">✕</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let state = {
+    apiKey: localStorage.getItem('seo_trans_api_key') || '',
+    modelName: 'gemini-2.5-pro',
+    htmlInput: localStorage.getItem('seo_trans_source') || '',
+    rawKeywords: localStorage.getItem('seo_trans_kw') || '',
+    parsedKeywords: [],
+    isTranslating: false,
+    translationResult: '',
+    conversationHistory: [],
+    keywordStats: [],
+    activeView: 'code',
+    timerInterval: null,
+    timerSeconds: 0,
+    lastDuration: 0,
+    postProcess: {
+        cz_to_hu: true,
+        nbsp: true,
+        zarovka: true,
+        bulletin_class: true,
+        li_strong: true,
+        bazar_outlet: true,
+        strip_fence: true,
+    }
+};
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.onload = () => {
+    if (state.apiKey) {
+        document.getElementById('api-key-input').value = state.apiKey;
+        document.getElementById('api-status').classList.add('active');
+    }
+    if (state.htmlInput) {
+        document.getElementById('source-input').value = state.htmlInput;
+        updateSrcCount();
+    }
+    if (state.rawKeywords) {
+        document.getElementById('keywords-input').value = state.rawKeywords;
+        parseKeywords();
+        updateKwChips();
+    }
+    attachListeners();
+    updateStats();
+};
+
+// ═══════════════════════════════════════════════════
+// LISTENERS
+// ═══════════════════════════════════════════════════
+function attachListeners() {
+    document.getElementById('api-key-input').addEventListener('input', e => {
+        state.apiKey = e.target.value.trim();
+        localStorage.setItem('seo_trans_api_key', state.apiKey);
+        document.getElementById('api-status').classList.toggle('active', state.apiKey.length > 10);
+    });
+
+    document.getElementById('source-input').addEventListener('input', e => {
+        state.htmlInput = e.target.value;
+        localStorage.setItem('seo_trans_source', state.htmlInput);
+        updateSrcCount();
+        updateStats();
+    });
+
+    document.getElementById('keywords-input').addEventListener('input', e => {
+        state.rawKeywords = e.target.value;
+        localStorage.setItem('seo_trans_kw', state.rawKeywords);
+        parseKeywords();
+        updateKwChips();
+        updateStats();
+    });
+
+    document.querySelectorAll('#model-grid .model-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#model-grid .model-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.modelName = btn.dataset.model;
+            document.getElementById('stat-model').textContent = btn.querySelector('.model-btn-name').textContent;
+        });
+    });
+
+    document.querySelectorAll('#pp-list .pp-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const key = toggle.dataset.key;
+            state.postProcess[key] = !state.postProcess[key];
+            toggle.classList.toggle('on', state.postProcess[key]);
+        });
+    });
+
+    document.querySelectorAll('.view-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            state.activeView = tab.dataset.view;
+            showPane(state.activeView);
+        });
+    });
+
+    document.getElementById('translate-btn').addEventListener('click', handleTranslate);
+    document.getElementById('copy-btn').addEventListener('click', handleCopy);
+
+    // Manuális szerkesztés a kimenetben → state + preview szinkron
+    document.getElementById('result-output').addEventListener('input', e => {
+        state.translationResult = e.target.value;
+        updateOutCount();
+        updateStats();
+        if (state.activeView === 'preview') updatePreview();
+        if (state.activeView === 'keywords') updateKwStats();
+    });
+}
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+function parseKeywords() {
+    const lines = state.rawKeywords.split('\n');
+    state.parsedKeywords = lines.map(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return null;
+        const match = trimmed.match(/(.+)\s+(\d+)$/);
+        return match
+            ? { word: match[1].trim(), volume: parseInt(match[2], 10) }
+            : { word: trimmed, volume: 0 };
+    }).filter(Boolean).sort((a, b) => b.volume - a.volume);
+}
+
+function updateKwChips() {
+    const container = document.getElementById('kw-chips');
+    const badge = document.getElementById('kw-count-badge');
+    const count = state.parsedKeywords.length;
+    badge.textContent = `${count} db`;
+    if (count === 0) {
+        container.innerHTML = '<span class="kw-empty">Nincs kulcsszó még</span>';
+        return;
+    }
+    container.innerHTML = state.parsedKeywords.map(k =>
+        `<span class="kw-chip">${k.word} <span class="vol">${k.volume.toLocaleString('hu-HU')}</span></span>`
+    ).join('');
+}
+
+function updateSrcCount() {
+    const len = state.htmlInput.length;
+    document.getElementById('src-char-count').textContent = `${len.toLocaleString('hu-HU')} kar`;
+    document.getElementById('stat-src').textContent = len > 0 ? `${len.toLocaleString('hu-HU')} kar` : '—';
+}
+
+function updateOutCount() {
+    const len = state.translationResult.length;
+    document.getElementById('out-char-count').textContent = `${len.toLocaleString('hu-HU')} kar`;
+    document.getElementById('stat-out').textContent = len > 0 ? `${len.toLocaleString('hu-HU')} kar` : '—';
+    document.getElementById('output-stats').textContent = len > 0 ? `${len.toLocaleString('hu-HU')} karakter` : '';
+}
+
+function updateStats() {
+    document.getElementById('stat-kw').textContent = state.parsedKeywords.length;
+    updateSrcCount();
+    updateOutCount();
+}
+
+function showPane(view) {
+    ['code', 'preview', 'keywords'].forEach(v => {
+        document.getElementById(`pane-${v}`).classList.toggle('active', v === view);
+    });
+    if (view === 'preview') updatePreview();
+    if (view === 'keywords') updateKwStats();
+}
+
+function updatePreview() {
+    if (!state.translationResult) return;
+    const frame = document.getElementById('preview-frame');
+
+    const content = state.translationResult
+        .replace(/<link[^>]+>/gi, '')
+        .replace(/<style[\s\S]*?<\/style>/gi, '');
+
+    const html = `<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="hu">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.alza.cz/Foto/or/articles/30917/css/global-full.css">
+    <link rel="stylesheet" href="https://cdn.alza.cz/Foto/or/articles/30917/css/categorypage-full.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.alza.cz/Foto/imggalery/LandingPages/NewCategoryStyle/style.css">
+    <link rel="stylesheet" href="https://cdn.alza.hu/Foto/LegendFoto/EN/Files/css/_or_nastroje.css">
+    <style>
+        html, body { margin: 0; padding: 0; background: #fff; }
+        img { height: auto; }
+        div.imgwrapper {
+            display: -ms-flexbox; display: -webkit-flex; display: flex;
+            -webkit-justify-content: center; -ms-flex-pack: center; justify-content: center;
+        }
+        p.imgbox {
+            text-align: center; font-size: 13px; font-weight: 800;
+            -webkit-flex: 1 1 auto; -ms-flex: 1 1 auto; flex: 1 1 auto; margin-right: 2%;
+        }
+        p.imgbox:last-child { margin-right: 0; }
+        p.imgbox img { max-width: 85%; }
+        p.imgbox a img { max-width: 85%; }
+        .categoryPage .category-description .imgwrapper a,
+        .categoryPage .category-description .imgwrapper { color: #00275a; text-decoration: none; }
+        .categoryPage .category-description .imgwrapper a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body class="default alza-cz alza">
+<div class="layout-1 cpg lng-hu alza" id="body2">
+  <div id="body2Inner"><div id="body3Inner"><div class="page2" id="page">
+    <div id="content0c"><div id="content0"><div id="content2">
+      <div class="categoryPage"><div class="mainContent">
+        <div id="categoryAnotationBlock">
+          <div class="category-description" id="categoryUpperDescription">
+            <div>
+              ${content}
+            </div>
+            <div class="decription-body"></div>
+          </div>
+        </div>
+      </div></div>
+    </div></div></div>
+  </div></div></div>
+</body>
+</html>`;
+
+    frame.srcdoc = html;
+}
+
+function updateKwStats() {
+    const container = document.getElementById('kw-stats-list');
+    if (!state.translationResult || state.parsedKeywords.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">Nincs adat még</div><div class="empty-sub">Futtasd le a fordítást, majd ellenőrizd a kulcsszó előfordulásokat.</div></div>`;
+        return;
+    }
+    const stats = state.parsedKeywords.map(kw => {
+        const regex = new RegExp(kw.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const matches = state.translationResult.match(regex);
+        return { word: kw.word, volume: kw.volume, count: matches ? matches.length : 0 };
+    });
+    state.keywordStats = stats;
+    const maxCount = Math.max(...stats.map(s => s.count), 1);
+    container.innerHTML = stats.map(s => `
+        <div class="kw-stat-row">
+            <span class="kw-stat-word">${s.word}</span>
+            <div class="kw-stat-bar-wrap">
+                <div class="kw-stat-bar" style="width:${Math.round((s.count/maxCount)*100)}%"></div>
+            </div>
+            <span class="kw-stat-count ${s.count > 0 ? 'found' : 'missing'}">${s.count}×</span>
+        </div>
+    `).join('');
+}
+
+function postProcessHtml(html) {
+    let p = html;
+    if (state.postProcess.strip_fence) p = p.replace(/^```html\n?/gm, '').replace(/\n?```$/gm, '').replace(/```/g, '');
+    if (state.postProcess.cz_to_hu) p = p.replace(/(src|href)="([^"]*?)\.cz([^"]*)"/gi, '$1="$2.hu$3"');
+    if (state.postProcess.nbsp) p = p.replace(/&nbsp;/g, ' ');
+    if (state.postProcess.zarovka) p = p.replace(/\bzarovka\b(?!100)/gi, 'zarovka100');
+    if (state.postProcess.bulletin_class) p = p.replace(/class="article-bulletin[^"]*"/g, 'class="article-bulletin"');
+    if (state.postProcess.li_strong) p = p.replace(/<li>\s*<strong>(A|Az)\s+/gi, '<li>$1 <strong>');
+    if (state.postProcess.bazar_outlet) p = p.replace(/Bazar/g, 'Outlet');
+    return p.trim();
+}
+
+function showError(msg) {
+    document.getElementById('error-msg').textContent = msg;
+    document.getElementById('error-bar').style.display = 'flex';
+}
+
+function hideError() {
+    document.getElementById('error-bar').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════════
+function startTimer() {
+    state.timerSeconds = 0;
+    clearInterval(state.timerInterval);
+    const badge = document.getElementById('timer-badge');
+    badge.className = 'timer-badge running';
+    state.timerInterval = setInterval(() => {
+        state.timerSeconds++;
+        badge.textContent = `◷ ${state.timerSeconds} mp`;
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(state.timerInterval);
+    state.lastDuration = state.timerSeconds;
+    const badge = document.getElementById('timer-badge');
+    badge.className = 'timer-badge';
+    badge.textContent = `◷ ${state.lastDuration} mp`;
+}
+
+// ═══════════════════════════════════════════════════
+// GEMINI STREAMING
+// ═══════════════════════════════════════════════════
+async function callGemini(messages, onChunk) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${state.modelName}:streamGenerateContent?alt=sse&key=${state.apiKey}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: messages,
+            generationConfig: { maxOutputTokens: 65536, temperature: 0.3 }
+        })
+    });
+
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let finishReason = null;
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const raw = line.slice(6).trim();
+            if (!raw || raw === '[DONE]') continue;
+            try {
+                const parsed = JSON.parse(raw);
+                const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) onChunk(text);
+                const fr = parsed?.candidates?.[0]?.finishReason;
+                if (fr) finishReason = fr;
+            } catch (e) { /* skip */ }
+        }
+    }
+    return finishReason;
+}
+
+// ═══════════════════════════════════════════════════
+// TRANSLATE
+// ═══════════════════════════════════════════════════
+async function handleTranslate() {
+    hideError();
+    document.getElementById('continue-bar').style.display = 'none';
+
+    if (!state.apiKey) { showError('Add meg a Google Gemini API kulcsodat!'); return; }
+    if (!state.htmlInput.trim()) { showError('Illessz be cseh HTML forráskódot!'); return; }
+
+    state.isTranslating = true;
+    state.translationResult = '';
+    state.conversationHistory = [];
+
+    const btn = document.getElementById('translate-btn');
+    const icon = document.getElementById('trans-icon');
+    const label = document.getElementById('trans-label');
+    btn.disabled = true;
+    btn.classList.add('loading');
+    icon.innerHTML = '<span class="spinner">⟳</span>';
+    label.textContent = 'Fordítás...';
+
+    const resultArea = document.getElementById('result-output');
+    
+    resultArea.value = '';
+
+    const progressFill = document.getElementById('progress-fill');
+    progressFill.classList.add('indeterminate');
+
+    startTimer();
+
+    const kwList = state.parsedKeywords.length > 0
+        ? state.parsedKeywords.map(k => `- ${k.word} (${k.volume})`).join('\n')
+        : '(nincs megadva)';
+
+    const prompt = `SZEREP: Professzionális magyar SEO-szövegíró és fordító vagy.
+FELADAT: Fordítsd le a megadott cseh nyelvű HTML tartalmat magyarra.
+
+STÍLUS ÉS TARTALOM:
+- HANGNEM: Közvetlen, TEGEZŐDŐ (vásárlóhoz szóló).
+- STÍLUS: Egyszerű köznyelvi, trendi, webshop-kompatibilis, vásárlásra ösztönző.
+- GEO: Magyarországra lokalizált tartalom.
+- SEO: Használd a megadott kulcsszavakat természetes módon a szövegben ÉS ahol releváns, az "alt" attribútumokban is.
+
+TECHNIKAI ELVÁRÁSOK:
+- Ne változtass a HTML struktúrán.
+- MINDEN URL-ben (src és href attribútumokban is!) a ".cz" részt írd át ".hu"-ra (pl. cdn.alza.cz -> cdn.alza.hu).
+- A .htm végződés a hivatkozásokban minden esetben .htm marad!
+- Ne használj &nbsp; karaktereket, csak sima szóközt.
+- A "zarovka" szó helyett mindig "zarovka100"-at írj.
+- A <div class="article-bulletin"> ne tartalmazzon más extra class-t.
+- Listaelemeknél (li) a névelő (A, Az) a <strong> tagon KÍVÜLRE kerüljön: <li>A <strong>szó</strong> leírása.
+- Csak a tiszta HTML kódot add vissza, semmi más – se kommentár, se kódblokk.
+- Ha találsz olyan hivatkozást, ahol a szövegben Bazar szó szerepel (pl. <a href="...">Bazar</a>), fordítsd Outlet-nek.
+
+KULCSSZAVAK:
+${kwList}
+
+FORRÁS (CSEH HTML):
+${state.htmlInput}`;
+
+    state.conversationHistory = [{ role: 'user', parts: [{ text: prompt }] }];
+    let accumulatedRaw = '';
+
+    try {
+        const finishReason = await callGemini(state.conversationHistory, (chunk) => {
+            accumulatedRaw += chunk;
+            const cleaned = postProcessHtml(accumulatedRaw);
+            resultArea.value = cleaned;
+            resultArea.scrollTop = resultArea.scrollHeight;
+            state.translationResult = cleaned;
+            updateOutCount();
+        });
+
+        state.conversationHistory.push({ role: 'model', parts: [{ text: accumulatedRaw }] });
+
+        const final = postProcessHtml(accumulatedRaw);
+        state.translationResult = final;
+        resultArea.value = final;
+        
+        updateOutCount();
+        updateKwStats();
+
+        stopTimer();
+
+        if (finishReason === 'MAX_TOKENS') {
+            document.getElementById('continue-bar').style.display = 'flex';
+        }
+
+    } catch (err) {
+        stopTimer();
+        showError(err.message || 'Ismeretlen hiba a fordítás során.');
+    } finally {
+        state.isTranslating = false;
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        icon.textContent = '⟳';
+        label.textContent = 'Újrafordítás';
+        progressFill.classList.remove('indeterminate');
+        progressFill.style.width = state.translationResult ? '100%' : '0%';
+        setTimeout(() => { progressFill.style.width = '0%'; }, 2000);
+    }
+}
+
+// ═══════════════════════════════════════════════════
+// CONTINUE
+// ═══════════════════════════════════════════════════
+async function handleContinue() {
+    if (!state.conversationHistory.length) return;
+    hideError();
+    document.getElementById('continue-bar').style.display = 'none';
+
+    const btn = document.getElementById('translate-btn');
+    btn.disabled = true;
+    const progressFill = document.getElementById('progress-fill');
+    progressFill.classList.add('indeterminate');
+
+    const resultArea = document.getElementById('result-output');
+    
+
+    state.conversationHistory.push({
+        role: 'user',
+        parts: [{ text: 'Folytasd pontosan ott ahol abbahagytad. Ne ismételd meg a már lefordított részt, csak folytasd a HTML kódot.' }]
+    });
+
+    let continuation = '';
+
+    try {
+        const finishReason = await callGemini(state.conversationHistory, (chunk) => {
+            continuation += chunk;
+            const existingClean = state.translationResult;
+            const newPart = postProcessHtml(continuation);
+            const merged = existingClean + newPart;
+            resultArea.value = merged;
+            resultArea.scrollTop = resultArea.scrollHeight;
+            updateOutCount();
+        });
+
+        state.conversationHistory.push({ role: 'model', parts: [{ text: continuation }] });
+
+        const continuationClean = postProcessHtml(continuation);
+        state.translationResult = state.translationResult + continuationClean;
+        resultArea.value = state.translationResult;
+        
+        updateOutCount();
+        updateKwStats();
+
+        if (finishReason === 'MAX_TOKENS') {
+            document.getElementById('continue-bar').style.display = 'flex';
+        }
+
+    } catch (err) {
+        showError('Folytatás sikertelen: ' + (err.message || 'Ismeretlen hiba'));
+    } finally {
+        btn.disabled = false;
+        progressFill.classList.remove('indeterminate');
+        progressFill.style.width = '0%';
+    }
+}
+
+// ═══════════════════════════════════════════════════
+// COPY
+// ═══════════════════════════════════════════════════
+async function handleCopy() {
+    const text = state.translationResult;
+    if (!text) return;
+    const copyBtn = document.getElementById('copy-btn');
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+    }
+    copyBtn.classList.add('copied');
+    copyBtn.innerHTML = '✓ Másolva!';
+    setTimeout(() => {
+        copyBtn.classList.remove('copied');
+        copyBtn.innerHTML = '⎘ Másolás';
+    }, 1500);
+}
+</script>
+</body>
+</html>
