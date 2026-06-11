@@ -931,7 +931,7 @@ async function callGemini(messages, onChunk) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             contents: messages,
-            generationConfig: { maxOutputTokens: 65536, temperature: 0.3 }
+            generationConfig: { maxOutputTokens: 65536, temperature: 0.5 }
         })
     });
 
